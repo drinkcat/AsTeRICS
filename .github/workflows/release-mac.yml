@@ -17,6 +17,14 @@ on:
           - macos-14
           - macos-15
           - macos-latest
+      architecture:
+        description: "Architecture"
+        required: false
+        default: x64
+        type: choice
+        options:
+          - x64
+          - aarch64
   workflow_call:
     inputs:
       version:
@@ -26,6 +34,11 @@ on:
       platform:
         description: "Platform Type"
         default: macos-latest
+        required: true
+        type: string
+      architecture:
+        description: "Architecture"
+        default: x64
         required: true
         type: string
 env:
@@ -43,7 +56,7 @@ jobs:
           java-version: "8"
           distribution: "zulu"
           java-package: "jdk+fx"
-          architecture: "x64"
+          architecture: ${{ inputs.architecture }}
           check-latest: true
       - name: Move JDK
         run: |
@@ -52,7 +65,7 @@ jobs:
           cp -r $JAVA_HOME/!(Contents) $JAVA_HOME/Contents/Home/
       - name: Build AsTeRICS
         env:
-          JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}/Contents/Home
+          JAVA_HOME: ${{ env.JAVA_HOME_8_arm64 }}/Contents/Home
         run: ant -buildfile Installer/asterics-are/build.xml deploy -Dfx.deploy.nativeBundles=dmg -DAPE.embedJava=true -Dfx.application.version=$VERSION -Dfx.deploy.verbose=true
       - name: Release .dmg File
         uses: actions/upload-artifact@v4
