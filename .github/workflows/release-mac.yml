@@ -13,6 +13,10 @@ on:
         type: choice
         options:
           - macos-12
+          - macos-13
+          - macos-14
+          - macos-15
+          - macos-latest
   workflow_call:
     inputs:
       version:
